@@ -190,7 +190,7 @@ async def start_poll(interaction: discord.Interaction, division: str):
             return callback
 
         def build_embed(self, is_closed=False, status_text=""):
-            title_prefix = "🛑" if is_closed else "🏆"
+            title_prefix = "" if is_closed else ""
             title_suffix = " - Closed" if is_closed else ""
             color = discord.Color.red() if is_closed else discord.Color.green()
             
@@ -200,7 +200,7 @@ async def start_poll(interaction: discord.Interaction, division: str):
                 desc = f"**Results Are Finalized!**\n{status_text}\n\n"
             else:
                 desc = f"Vote for a member below!\n*Note: You cannot vote for yourself and can only vote once.*\n"
-                desc += f"⏳ **Ends:** <t:{end_time_unix}:R> (In 24 hours)\n\n"
+                desc += f" **Ends:** <t:{end_time_unix}:R> (In 24 hours)\n\n"
                 
             for m_id, count in self.tally.items():
                 desc += f"**{self.members_map[m_id].display_name}**: {count} votes\n"
@@ -250,7 +250,7 @@ async def start_poll(interaction: discord.Interaction, division: str):
                 await final_winner.add_roles(fresh_winner_role, reason="24hr Poll automated clean-victory.")
             except discord.HTTPException:
                 pass
-            winner_text = f"🏆 **Winner:** {final_winner.mention} has been awarded the {fresh_winner_role.mention} role!"
+            winner_text = f" **Winner:** {final_winner.mention} has been awarded the {fresh_winner_role.mention} role!"
 
         for item in view.children:
             item.disabled = True
@@ -331,7 +331,7 @@ async def start_council_poll(interaction: discord.Interaction):
             return callback
 
         def build_embed(self, is_closed=False, status_text=""):
-            title_prefix = "🛑" if is_closed else "🗳️"
+            title_prefix = "" if is_closed else ""
             title_suffix = " - Closed" if is_closed else ""
             color = discord.Color.red() if is_closed else discord.Color.blue()
             
@@ -341,7 +341,7 @@ async def start_council_poll(interaction: discord.Interaction):
                 desc = f"**Results Are Finalized!**\n{status_text}\n\n"
             else:
                 desc = f"Vote for a new Council member below!\n*Note: You cannot vote for yourself and can only vote once.*\n"
-                desc += f"⏳ **Ends:** <t:{end_time_unix}:R> (In 24 hours)\n\n"
+                desc += f" **Ends:** <t:{end_time_unix}:R> (In 24 hours)\n\n"
                 
             for m_id, count in self.tally.items():
                 desc += f"**{self.members_map[m_id].display_name}**: {count} votes\n"
@@ -383,7 +383,7 @@ async def start_council_poll(interaction: discord.Interaction):
                 await final_winner.add_roles(fresh_council_role, reason="24hr Council Poll automated clean-victory.")
             except discord.HTTPException:
                 pass
-            winner_text = f"🏆 **Winner:** {final_winner.mention} has been added to the {fresh_council_role.mention} role!"
+            winner_text = f" **Winner:** {final_winner.mention} has been added to the {fresh_council_role.mention} role!"
 
         for item in view.children:
             item.disabled = True
@@ -464,28 +464,28 @@ async def on_message(message):
         ) as resp:
             status = resp.status
     except aiohttp.ClientError as e:
-        await dm("❌ Could not reach the BeatLeader API. Please try again later.")
-        await _log(f"🔴 **API network error**\n{ctx}\n**Error:** `{e}`")
+        await dm(" Could not reach the BeatLeader API. Please try again later.")
+        await _log(f" **API network error**\n{ctx}\n**Error:** `{e}`")
         await bot.process_commands(message)
         return
 
     if status != 200:
         await dm(
-            f"❌ Failed to invite you to the clan. BeatLeader returned HTTP {status}."
+            f" Failed to invite you to the clan. BeatLeader returned HTTP {status}."
         )
-        await _log(f"🔴 **Invite failed (HTTP {status})**\n{ctx}")
+        await _log(f" **Invite failed (HTTP {status})**\n{ctx}")
         await bot.process_commands(message)
         return
 
-    await dm("✅ Successfully invited you to the clan!")
+    await dm(" Successfully invited you to the clan!")
 
     roles = [r for rid in ROLE_IDS if (r := message.guild.get_role(rid)) is not None]
     if not roles:
         await dm(
-            "⚠️ Could not find any of the configured roles. Please contact an admin."
+            " Could not find any of the configured roles. Please contact an admin."
         )
         await _log(
-            f"🟡 **Role assign failed — no roles found**\n{ctx}\n**Checked IDs:** `{ROLE_IDS}`"
+            f" **Role assign failed  no roles found**\n{ctx}\n**Checked IDs:** `{ROLE_IDS}`"
         )
     else:
         role = min(roles, key=lambda r: len(r.members))
@@ -493,15 +493,15 @@ async def on_message(message):
             await message.author.add_roles(role, reason="BeatLeader profile linked")
         except discord.Forbidden:
             await dm(
-                "⚠️ The bot doesn't have permission to assign roles. Please contact an admin."
+                " The bot doesn't have permission to assign roles. Please contact an admin."
             )
             await _log(
-                f"🟡 **Role assign failed — Forbidden**\n{ctx}\n**Role:** {role.name} (`{role.id}`)"
+                f" **Role assign failed  Forbidden**\n{ctx}\n**Role:** {role.name} (`{role.id}`)"
             )
         except discord.HTTPException as e:
-            await dm(f"⚠️ Failed to assign your role: {e}")
+            await dm(f" Failed to assign your role: {e}")
             await _log(
-                f"🟡 **Role assign failed — HTTPException**\n{ctx}\n**Role:** {role.name} (`{role.id}`)\n**Error:** `{e}`"
+                f" **Role assign failed  HTTPException**\n{ctx}\n**Role:** {role.name} (`{role.id}`)\n**Error:** `{e}`"
             )
 
     remove_role = message.guild.get_role(REMOVE_ROLE_ID)
@@ -512,15 +512,15 @@ async def on_message(message):
             )
         except discord.Forbidden:
             await dm(
-                "⚠️ The bot doesn't have permission to remove roles. Please contact an admin."
+                " The bot doesn't have permission to remove roles. Please contact an admin."
             )
             await _log(
-                f"🟡 **Role remove failed — Forbidden**\n{ctx}\n**Role:** {remove_role.name} (`{remove_role.id}`)"
+                f" **Role remove failed  Forbidden**\n{ctx}\n**Role:** {remove_role.name} (`{remove_role.id}`)"
             )
         except discord.HTTPException as e:
-            await dm(f"⚠️ Failed to remove your old role: {e}")
+            await dm(f" Failed to remove your old role: {e}")
             await _log(
-                f"🟡 **Role remove failed — HTTPException**\n{ctx}\n**Role:** {remove_role.name} (`{remove_role.id}\n**Error:** `{e}`"
+                f" **Role remove failed  HTTPException**\n{ctx}\n**Role:** {remove_role.name} (`{remove_role.id}\n**Error:** `{e}`"
             )
 
     await bot.process_commands(message)
